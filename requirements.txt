@@ -1,4 +1,5 @@
-Flask==2.0.1
+Flask==2.2.3
+Werkzeug==2.2.3
 sympy==1.9
 gunicorn==20.1.0
 numpy>=1.22.0 
