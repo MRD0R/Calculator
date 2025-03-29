@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Линейная алгебра</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #111;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .snake-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .snake {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(40, 180, 70, 0.7);
+            animation: snakeSpin 10s infinite linear;
+        }
+
+        @keyframes snakeSpin {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(100px, 100px) rotate(180deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+
+        .tab:hover {
+            background-color: #45a049;
+        }
+
+        .home-button {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 20px;
+            padding: 10px 30px;
+            background-color: #2e7d32;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #1b5e20;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: block;
+            margin: 0 auto;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background-color: rgba(245, 255, 245, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .error {
+            color: #d32f2f;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: rgba(255, 235, 235, 0.9);
+            font-weight: 500;
+        }
+
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            margin: 30px auto;
+            border: 5px solid rgba(240, 240, 240, 0.5);
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .matrices-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .matrix-container {
+            flex: 0 1 auto;
+            margin: 0 15px;
+        }
+
+        .operation-selector {
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .matrix-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        /* Убираем стрелки в Firefox */
+        .matrix-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Убираем стрелки в Chrome, Safari, Edge, Opera */
+        .matrix-input[type=number]::-webkit-outer-spin-button,
+        .matrix-input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .matrix-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .matrix-cell {
+            width: 60px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .dimension-input {
+            width: 60px;
+            height: 30px;
+            text-align: center;
+            margin: 0 5px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .matrix-dimension {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: -10px;
+        }
+
+        .matrix-dimension span {
+            margin: 0 5px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="snake-background">
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+    </div>
+
+    <div class="container">
+        <a href="/" class="home-button">Домой</a>
+        <div class="tabs">
+            <a href="/linear_algebra" class="tab">Линейная алгебра</a>
+            <a href="/mathematical_analysis" class="tab">Математический анализ</a>
+            <a href="/differential_equations" class="tab">Дифференциальные уравнения</a>
+        </div>
+        <h1>Линейная алгебра</h1>
+
+        <div class="matrices-container">
+            <div class="matrix-container">
+                <h3>Матрица A</h3>
+                <div class="matrix-dimension">
+                    <input type="number" id="matrix-a-rows" class="dimension-input" min="1" placeholder="строки" value="3">
+                    <span>×</span>
+                    <input type="number" id="matrix-a-cols" class="dimension-input" min="1" placeholder="столбцы" value="3">
+                    <button onclick="updateMatrixA()">Создать</button>
+                </div>
+                <div id="matrix-a" class="matrix"></div>
+            </div>
+
+            <div class="matrix-container">
+                <h3>Матрица B</h3>
+                <div class="matrix-dimension">
+                    <input type="number" id="matrix-b-rows" class="dimension-input" min="1" placeholder="строки" value="3">
+                    <span>×</span>
+                    <input type="number" id="matrix-b-cols" class="dimension-input" min="1" placeholder="столбцы" value="3">
+                    <button onclick="updateMatrixB()">Создать</button>
+                </div>
+                <div id="matrix-b" class="matrix"></div>
+            </div>
+
+            <div class="operation-selector">
+                <select id="operation">
+                    <option value="add">Сложение</option>
+                    <option value="subtract">Вычитание</option>
+                    <option value="multiply">Умножение</option>
+                </select>
+                <button onclick="calculate()">Вычислить</button>
+            </div>
+
+            <div class="matrix-container">
+                <h3>Результат</h3>
+                <div id="result-matrix" class="matrix"></div>
+            </div>
+        </div>
+
+        <div id="spinner" class="spinner"></div>
+        <div id="error" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        function createSnake() {
+            const snake = document.createElement('div');
+            snake.classList.add('snake');
+            snake.style.left = Math.random() * window.innerWidth + 'px';
+            snake.style.top = Math.random() * window.innerHeight + 'px';
+            document.querySelector('.snake-background').appendChild(snake);
+        }
+
+        for (let i = 0; i < 10; i++) {
+            createSnake();
+        }
+
+        function updateMatrixA() {
+            const rows = parseInt(document.getElementById('matrix-a-rows').value);
+            const cols = parseInt(document.getElementById('matrix-a-cols').value);
+            createMatrix('matrix-a', rows, cols, 'a');
+        }
+
+        function updateMatrixB() {
+            const rows = parseInt(document.getElementById('matrix-b-rows').value);
+            const cols = parseInt(document.getElementById('matrix-b-cols').value);
+            createMatrix('matrix-b', rows, cols, 'b');
+        }
+
+        function createMatrix(containerId, rows, cols, prefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            for(let i = 0; i < rows; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                for(let j = 0; j < cols; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'matrix-input';
+                    input.id = `${prefix}${i}${j}`;
+                    row.appendChild(input);
+                }
+                container.appendChild(row);
+            }
+        }
+
+        function getMatrixValues(prefix) {
+            const rows = parseInt(document.getElementById(`matrix-${prefix}-rows`).value);
+            const cols = parseInt(document.getElementById(`matrix-${prefix}-cols`).value);
+            const matrix = [];
+            
+            for(let i = 0; i < rows; i++) {
+                matrix[i] = [];
+                for(let j = 0; j < cols; j++) {
+                    const value = document.getElementById(`${prefix}${i}${j}`).value;
+                    matrix[i][j] = value ? parseFloat(value) : 0;
+                }
+            }
+            return matrix;
+        }
+
+        function displayResult(matrix) {
+            const container = document.getElementById('result-matrix');
+            container.innerHTML = '';
+            
+            for(let i = 0; i < matrix.length; i++) {
+                const row = document.createElement('div');
+                row.className = 'matrix-row';
+                
+                for(let j = 0; j < matrix[i].length; j++) {
+                    const cell = document.createElement('span');
+                    cell.className = 'matrix-cell';
+                    cell.textContent = Math.round(matrix[i][j] * 1000) / 1000;
+                    row.appendChild(cell);
+                }
+                container.appendChild(row);
+            }
+        }
+
+        function calculate() {
+            const operation = document.getElementById('operation').value;
+            const matrixA = getMatrixValues('a');
+            const matrixB = getMatrixValues('b');
+            let result;
+
+            // Проверка размерностей
+            if (operation === 'add' || operation === 'subtract') {
+                if (matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                    alert('Для сложения или вычитания матрицы должны быть одинакового размера!');
+                    return;
+                }
+                result = operation === 'add' ? addMatrices(matrixA, matrixB) : subtractMatrices(matrixA, matrixB);
+            } else if (operation === 'multiply') {
+                if (matrixA[0].length !== matrixB.length) {
+                    alert('Для умножения количество столбцов первой матрицы должно быть равно количеству строк второй матрицы!');
+                    return;
+                }
+                result = multiplyMatrices(matrixA, matrixB);
+            }
+
+            displayResult(result);
+        }
+
+        function addMatrices(a, b) {
+            return a.map((row, i) => row.map((val, j) => val + b[i][j]));
+        }
+
+        function subtractMatrices(a, b) {
+            return a.map((row, i) => row.map((val, j) => val - b[i][j]));
+        }
+
+        function multiplyMatrices(a, b) {
+            const result = [];
+            for(let i = 0; i < a.length; i++) {
+                result[i] = [];
+                for(let j = 0; j < b[0].length; j++) {
+                    result[i][j] = 0;
+                    for(let k = 0; k < b.length; k++) {
+                        result[i][j] += a[i][k] * b[k][j];
+                    }
+                }
+            }
+            return result;
+        }
+
+        // Инициализация матриц при загрузке страницы
+        window.onload = function() {
+            updateMatrixA();
+            updateMatrixB();
+        }
+    </script>
+</body>
+</html> 

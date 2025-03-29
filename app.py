@@ -166,6 +166,18 @@ def calculate():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+@app.route('/linear_algebra')
+def linear_algebra():
+    return render_template('linear_algebra.html')
+
+@app.route('/mathematical_analysis')
+def mathematical_analysis():
+    return render_template('mathematical_analysis.html')
+
+@app.route('/differential_equations')
+def differential_equations():
+    return render_template('differential_equations.html')
+
 if __name__ == '__main__':
     # Для локальной разработки используем debug mode
     app.run(debug=True)

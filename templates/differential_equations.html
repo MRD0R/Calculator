@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дифференциальные уравнения</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #111;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .snake-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .snake {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(40, 180, 70, 0.7);
+            animation: snakeSpin 10s infinite linear;
+        }
+
+        @keyframes snakeSpin {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+
+        .tab:hover {
+            background-color: #45a049;
+        }
+
+        .home-button {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 20px;
+            padding: 10px 30px;
+            background-color: #2e7d32;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #1b5e20;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 30px;
+        }
+
+        .equation-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .equation-input {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .coefficient-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+
+        .equation-text {
+            font-size: 1.2rem;
+            margin: 0 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 20px auto;
+            display: block;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(245, 255, 245, 0.9);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .result-title {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .result-step {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .math-expression {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.3rem;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .solution-type {
+            color: #1b5e20;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .help-text {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(232, 245, 233, 0.9);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #2e7d32;
+        }
+
+        /* Убираем стрелки для числовых полей */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <div class="snake-background">
+        <div class="snake"></div>
+        <div class="snake"></div>
+        <div class="snake"></div>
+    </div>
+
+    <div class="container">
+        <a href="/" class="home-button">Домой</a>
+        <div class="tabs">
+            <a href="/linear_algebra" class="tab">Линейная алгебра</a>
+            <a href="/mathematical_analysis" class="tab">Математический анализ</a>
+            <a href="/differential_equations" class="tab">Дифференциальные уравнения</a>
+        </div>
+        
+        <h1>Решение однородных дифференциальных уравнений</h1>
+
+        <div class="equation-form">
+            <div class="help-text">
+                Введите коэффициенты для уравнения вида:<br>
+                ay'' + by' + cy = 0
+            </div>
+
+            <div class="equation-input">
+                <input type="number" id="coef-a" class="coefficient-input" value="1" step="any">
+                <span class="equation-text">y'' + </span>
+                <input type="number" id="coef-b" class="coefficient-input" value="0" step="any">
+                <span class="equation-text">y' + </span>
+                <input type="number" id="coef-c" class="coefficient-input" value="0" step="any">
+                <span class="equation-text">y = 0</span>
+            </div>
+
+            <button onclick="solveEquation()">Решить</button>
+
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function createSnake() {
+            const snake = document.createElement('div');
+            snake.classList.add('snake');
+            snake.style.left = Math.random() * window.innerWidth + 'px';
+            snake.style.top = Math.random() * window.innerHeight + 'px';
+            document.querySelector('.snake-background').appendChild(snake);
+        }
+
+        for (let i = 0; i < 10; i++) {
+            createSnake();
+        }
+
+        function solveEquation() {
+            const a = parseFloat(document.getElementById('coef-a').value) || 1;
+            const b = parseFloat(document.getElementById('coef-b').value) || 0;
+            const c = parseFloat(document.getElementById('coef-c').value) || 0;
+
+            // Вычисляем дискриминант
+            const discriminant = b * b - 4 * a * c;
+            let solution = '<div class="result-title">Решение уравнения:</div>';
+            
+            // Добавляем исходное уравнение
+            solution += '<div class="result-step">Исходное уравнение:';
+            solution += `<div class="math-expression">${a}y'' + ${b}y' + ${c}y = 0</div></div>`;
+            
+            // Добавляем шаг с дискриминантом
+            solution += '<div class="result-step">Дискриминант:';
+            solution += `<div class="math-expression">D = ${b}² - 4·${a}·${c} = ${discriminant.toFixed(3)}</div></div>`;
+
+            if (discriminant > 0) {
+                // Два различных действительных корня
+                const r1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const r2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                
+                solution += '<div class="result-step">';
+                solution += '<div class="solution-type">Случай: D > 0 — два различных действительных корня</div>';
+                solution += 'Характеристические числа:';
+                solution += `<div class="math-expression">r₁ = ${r1.toFixed(3)}, r₂ = ${r2.toFixed(3)}</div>`;
+                solution += 'Общее решение:';
+                solution += `<div class="math-expression">y = C₁e^{${r1.toFixed(3)}x} + C₂e^{${r2.toFixed(3)}x}</div>`;
+                solution += '</div>';
+            } else if (discriminant === 0) {
+                // Один кратный действительный корень
+                const r = -b / (2 * a);
+                
+                solution += '<div class="result-step">';
+                solution += '<div class="solution-type">Случай: D = 0 — один кратный действительный корень</div>';
+                solution += 'Характеристическое число:';
+                solution += `<div class="math-expression">r = ${r.toFixed(3)}</div>`;
+                solution += 'Общее решение:';
+                solution += `<div class="math-expression">y = (C₁ + C₂x)e^{${r.toFixed(3)}x}</div>`;
+                solution += '</div>';
+            } else {
+                // Комплексные корни
+                const realPart = -b / (2 * a);
+                const imagPart = Math.sqrt(-discriminant) / (2 * a);
+                
+                solution += '<div class="result-step">';
+                solution += '<div class="solution-type">Случай: D < 0 — пара комплексно-сопряженных корней</div>';
+                solution += 'Характеристические числа:';
+                solution += `<div class="math-expression">r₁,₂ = ${realPart.toFixed(3)} ± ${Math.abs(imagPart).toFixed(3)}i</div>`;
+                solution += 'Общее решение:';
+                solution += `<div class="math-expression">y = e^{${realPart.toFixed(3)}x}(C₁cos(${Math.abs(imagPart).toFixed(3)}x) + C₂sin(${Math.abs(imagPart).toFixed(3)}x))</div>`;
+                solution += '</div>';
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = solution;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html> 
